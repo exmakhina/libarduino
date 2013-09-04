@@ -47,7 +47,7 @@ install:
 	# SparkFun pocket ISP programmer
 	# avrdude -p atmega168 -c usbtiny -U flash:w:$(PROG).rom 
 	# atmega328 based Duemilanove
-	 avrdude -p m328p -P /dev/ttyUSB0 -c stk500v1 -b 57600 -F -u -U flash:w:$(PROG).rom
+	avrdude -F -v -p m328p -c stk500v1 -P /dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_741333535373519132D0-if00 -U flash:w:$(PROG).rom
 	# atmega168 based Diecimila
 	# avrdude -p m328p -P /dev/ttyUSB0 -c stk500v1 -b 19200 -F -u -U flash:w:$(PROG).rom
 
