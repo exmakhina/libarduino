@@ -1,7 +1,7 @@
 # AVR Makefile
 
 # what do you want to call your binary
-PROG=avr-arduino
+PROG=libarduino
 
 # please uncomment the CPU that is used on your arduino
 CPU=atmega328p
@@ -17,42 +17,21 @@ F_CPU=16000000
 
 CFLAGS= -g -Os -Wall -Wstrict-prototypes -Wa,-ahlms=$(PROG).lst -mmcu=$(CPU) -DF_CPU=$(F_CPU)
 
-LFLAGS= -Wl,-Map=$(PROG).map,--cref -mmcu=$(CPU) -lm
-# use LFLAGS below if you need to printf floating point numbers
-#LFLAGS= -Wl,-u,vfprintf,-Map=$(PROG).map,--cref -mmcu=$(CPU) -lprintf_min -lm
-SRC = main.c uart.c ir.c pwm.c adc.c gpio.c  
+SRC = uart.c ir.c pwm.c adc.c gpio.c  
 OBJ = $(SRC:.c=.o)
 
 # default target when "make" is run w/o arguments
-all: $(PROG).rom
+all: $(PROG).a
 
 # compile .c into .o
 %.o: %.c
 	avr-gcc -c $(CFLAGS) -I. $*.c
-	
-# link up sample.o and timer.o into sample.elf
-$(PROG).elf: $(OBJ)
-	avr-gcc $(OBJ) $(LFLAGS) -o $(PROG).elf
 
-# copy ROM (FLASH) object out of sample.elf into sample.rom
-$(PROG).rom: $(PROG).elf
-	avr-objcopy -O srec $(PROG).elf $(PROG).rom
-	./checksize $(PROG).elf
-
-# command to program chip (optional) (invoked by running "make install")
-install:
-	# SparkFun pocket ISP programmer
-	# avrdude -p atmega168 -c usbtiny -U flash:w:$(PROG).rom 
-	# atmega328 based Uno
-	avrdude -F -v -p m328p -c stk500v1 -P /dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_741333535373519132D0-if00 -U flash:w:$(PROG).rom
-	# atmega168 based Diecimila
-	# avrdude -p m328p -P /dev/ttyUSB0 -c stk500v1 -b 19200 -F -u -U flash:w:$(PROG).rom
-
-# reprogram the fuses for the right clock source
-fuse:
-	avrdude -p atmega168 -c stk200 -U lfuse:w:0x62:m
+# link up *.o to create the archive file
+$(PROG).a: $(OBJ)
+	avr-ar rcs $(PROG).a $(OBJ)
 
 # command to clean up junk (no source files) (invoked by "make clean")
 clean:
-	rm -f *.o *.rom *.elf *.map *~ *.lst
+	rm -f *.o *.rom *.elf *.a *.map *~ *.lst
 
