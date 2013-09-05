@@ -20,8 +20,7 @@ CFLAGS= -g -Os -Wall -Wstrict-prototypes -Wa,-ahlms=$(PROG).lst -mmcu=$(CPU) -DF
 LFLAGS= -Wl,-Map=$(PROG).map,--cref -mmcu=$(CPU) -lm
 # use LFLAGS below if you need to printf floating point numbers
 #LFLAGS= -Wl,-u,vfprintf,-Map=$(PROG).map,--cref -mmcu=$(CPU) -lprintf_min -lm
-INCL = libarduino.h irkeys.h timercountercalcs.h
-SRC = main.c libarduino.c
+SRC = main.c uart.c ir.c pwm.c adc.c gpio.c  
 OBJ = $(SRC:.c=.o)
 
 # default target when "make" is run w/o arguments
@@ -35,8 +34,6 @@ all: $(PROG).rom
 $(PROG).elf: $(OBJ)
 	avr-gcc $(OBJ) $(LFLAGS) -o $(PROG).elf
 
-$(OBJ): $(INCL)
-
 # copy ROM (FLASH) object out of sample.elf into sample.rom
 $(PROG).rom: $(PROG).elf
 	avr-objcopy -O srec $(PROG).elf $(PROG).rom
@@ -46,7 +43,7 @@ $(PROG).rom: $(PROG).elf
 install:
 	# SparkFun pocket ISP programmer
 	# avrdude -p atmega168 -c usbtiny -U flash:w:$(PROG).rom 
-	# atmega328 based Duemilanove
+	# atmega328 based Uno
 	avrdude -F -v -p m328p -c stk500v1 -P /dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_741333535373519132D0-if00 -U flash:w:$(PROG).rom
 	# atmega168 based Diecimila
 	# avrdude -p m328p -P /dev/ttyUSB0 -c stk500v1 -b 19200 -F -u -U flash:w:$(PROG).rom

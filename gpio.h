@@ -18,33 +18,44 @@
 **  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **
 *************************************************************************/
-#ifndef LIBARDUINO_H
-#define LIBARDUINO_H
 
-#include <inttypes.h>
+#ifndef _GPIO_H_
+#define _GPIO_H_
 
-#define ENABLE_PWMSERVO /* servo control (conflicts with regular pwm) */
-#define ENABLE_PWM /* motor or led control (conflicts with pwmservo) */
-#define ENABLE_IR /* infrared receiver */
-#define ENABLE_ADC /* analog to digital convertor */
-#define ENABLE_SERIAL /* uart0 interface */
+#include "libarduino.h"
 
-#define ENABLE_ARDUINO_COMPAT /* subset of arduino functions */
+/**************************************************************************
+* no user configurable things to edit below this
+**************************************************************************/
 
-#define IR_DEBOUNCE /* uncomment to debounce IR with a delay */
+#define setpin_in(port, pin) 	port &= ~_BV(pin)
+#define setpin_out(port, pin)	port |= _BV(pin)
 
-#if !((F_CPU == 16000000) || (F_CPU == 8000000))
-#error "Processor speed not supported in libarduino.c !"
-#endif
+#define setpin(port, pin) 	port |= _BV(pin)
+#define clearpin(port, pin)	port &= ~_BV(pin)
 
-#if (F_CPU == 8000000)
-#error "Processor speed only partically supported by libarduino.c.  Some things may not work !"
-#endif
+void onboard_led_enable(void);
+void onboard_led_on(void);
+void onboard_led_off(void);
 
-#include "uart.h"
-#include "gpio.h"
-#include "ir.h"
-#include "pwm.h"
-#include "adc.h"
+#ifdef ENABLE_ARDUINO_COMPAT /* subset of arduino functions */
+enum pinmode {
+	INPUT  = 0,
+	OUTPUT = 1
+};
 
-#endif
+enum pinstate {
+	LOW = 0,
+	HIGH = 1
+};
+
+void pinMode(uint8_t pin, enum pinmode mode);
+void digitalWrite(uint8_t pin, enum pinstate value);
+uint8_t digitalRead(uint8_t pin);
+#ifdef ENABLE_PWM /* using arduino compat and pwm */
+void analogWrite(uint8_t pin, uint8_t value);
+#endif	// ENABLE_PWM
+
+#endif	// ENABLE_ARDUINO_COMPAT
+
+#endif 	// _GPIO_H_

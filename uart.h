@@ -18,33 +18,33 @@
 **  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **
 *************************************************************************/
-#ifndef LIBARDUINO_H
-#define LIBARDUINO_H
 
-#include <inttypes.h>
+#ifndef _UART_H_
+#define _UART_H_
 
-#define ENABLE_PWMSERVO /* servo control (conflicts with regular pwm) */
-#define ENABLE_PWM /* motor or led control (conflicts with pwmservo) */
-#define ENABLE_IR /* infrared receiver */
-#define ENABLE_ADC /* analog to digital convertor */
-#define ENABLE_SERIAL /* uart0 interface */
+#include "libarduino.h"
 
-#define ENABLE_ARDUINO_COMPAT /* subset of arduino functions */
+#ifdef ENABLE_SERIAL
+#define UART_BAUD_RATE			9600 /* default is 9600 */ 
+#define UART_BAUD_SELECT		(F_CPU / (UART_BAUD_RATE * 16L) - 1)
+#define UART_BUFFER_SIZE	16
+//#define ECHO_MODE_ENABLE
 
-#define IR_DEBOUNCE /* uncomment to debounce IR with a delay */
+#if	defined(__AVR_ATmega168__) || \
+ 	defined(__AVR_ATmega328P__)
 
-#if !((F_CPU == 16000000) || (F_CPU == 8000000))
-#error "Processor speed not supported in libarduino.c !"
+#define UART0_DATA	UDR0
+#define UART0_ISR_VECT USART_RX_vect
+
+#else
+// unsupported type
+#error "Processor type not supported in uart.h !"
 #endif
 
-#if (F_CPU == 8000000)
-#error "Processor speed only partically supported by libarduino.c.  Some things may not work !"
-#endif
+/* to use serial functions, do init then use printf() and getchar() */
+void serial_init(void);
+int serial_getchar(FILE* stream);
+int serial_putchar(char data, FILE* stream);
+#endif	// ENABLE_SERIAL
 
-#include "uart.h"
-#include "gpio.h"
-#include "ir.h"
-#include "pwm.h"
-#include "adc.h"
-
-#endif
+#endif	// _UART_H_

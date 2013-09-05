@@ -18,33 +18,17 @@
 **  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **
 *************************************************************************/
-#ifndef LIBARDUINO_H
-#define LIBARDUINO_H
 
-#include <inttypes.h>
+#ifndef _IR_H_
+#define _IR_H_
 
-#define ENABLE_PWMSERVO /* servo control (conflicts with regular pwm) */
-#define ENABLE_PWM /* motor or led control (conflicts with pwmservo) */
-#define ENABLE_IR /* infrared receiver */
-#define ENABLE_ADC /* analog to digital convertor */
-#define ENABLE_SERIAL /* uart0 interface */
+#include "libarduino.h"
 
-#define ENABLE_ARDUINO_COMPAT /* subset of arduino functions */
-
-#define IR_DEBOUNCE /* uncomment to debounce IR with a delay */
-
-#if !((F_CPU == 16000000) || (F_CPU == 8000000))
-#error "Processor speed not supported in libarduino.c !"
+#ifdef ENABLE_IR
+#define IR_BUFFER_SIZE		16
+void ir_init(void);
+uint8_t ir_get(void);
+uint8_t ir_get_nonblock(void);
 #endif
 
-#if (F_CPU == 8000000)
-#error "Processor speed only partically supported by libarduino.c.  Some things may not work !"
-#endif
-
-#include "uart.h"
-#include "gpio.h"
-#include "ir.h"
-#include "pwm.h"
-#include "adc.h"
-
-#endif
+#endif	// _IR_H_
