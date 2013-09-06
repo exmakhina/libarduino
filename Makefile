@@ -16,8 +16,10 @@ F_CPU=16000000
 #############################################################################
 
 CFLAGS= -g -Os -Wall -Wstrict-prototypes -Wa,-ahlms=$(PROG).lst -mmcu=$(CPU) -DF_CPU=$(F_CPU)
+CFLAGS += -gdwarf-2 -std=gnu99 -Wextra -pedantic -ffunction-sections -fdata-sections -fno-inline-small-functions -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += -MD -MP -MT $(*F).o -MF
 
-SRC = uart.c ir.c pwm.c adc.c gpio.c  
+SRC = uart.c ir.c pwm.c adc.c gpio.c crc8.c onewire.c ds18x20.c
 OBJ = $(SRC:.c=.o)
 
 # default target when "make" is run w/o arguments

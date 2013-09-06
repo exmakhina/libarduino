@@ -22,6 +22,7 @@
 #ifndef _UART_H_
 #define _UART_H_
 
+#include <stdio.h>
 #include "libarduino.h"
 
 #ifdef ENABLE_SERIAL
